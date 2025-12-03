@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: edem-worship
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false
