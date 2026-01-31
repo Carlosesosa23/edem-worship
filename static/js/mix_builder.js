@@ -1,41 +1,52 @@
-function toggleSongMix(name, btn) {
-    // Prevent default label click behavior to avoid double toggling if we move to div based
-    // But since we are using checkboxes in the original HTML, let's play nice with them
-
+function toggleSongMix(name) {
     const container = document.getElementById('mix-preview-list');
-    const existing = document.getElementById('mix-item-' + name);
 
-    // Checkbox state (the btn is the input itself or we find it)
-    const checkbox = document.querySelector(`input[name="songs"][value="${name}"]`);
+    // 1. Robust find using data attribute manually to avoid selector/ID issues
+    let existing = null;
+    for (const child of container.children) {
+        if (child.dataset.name === name) {
+            existing = child;
+            break;
+        }
+    }
+
+    // 2. Robust checkbox finding
+    // Escape double quotes for the attribute selector
+    const safeNameSelector = name.replace(/"/g, '\\"');
+    const checkbox = document.querySelector(`input[name="songs"][value="${safeNameSelector}"]`);
 
     if (existing) {
         // Remove
         existing.remove();
         if (checkbox) checkbox.checked = false;
-        updateMixOrder();
     } else {
         // Add
         if (checkbox) checkbox.checked = true;
 
         const item = document.createElement('div');
-        item.id = 'mix-item-' + name;
         item.className = 'mix-preview-item';
-        item.dataset.name = name;
+        item.dataset.name = name; // Store raw name safely in DOM
+
+        // Escape single quotes for the inline onclick handler string
+        const escapedName = name.replace(/'/g, "\\'");
+
+        // Note: passing 'this' to move functions avoids looking up by name again
         item.innerHTML = `
             <span class="preview-name">${name}</span>
             <div class="preview-controls">
-                <button type="button" onclick="moveMixItem('${name}', -1)">↑</button>
-                <button type="button" onclick="moveMixItem('${name}', 1)">↓</button>
-                <button type="button" onclick="toggleSongMix('${name}')" class="remove-btn">×</button>
+                <button type="button" onclick="moveMixItem(this, -1)">↑</button>
+                <button type="button" onclick="moveMixItem(this, 1)">↓</button>
+                <button type="button" onclick="toggleSongMix('${escapedName}')" class="remove-btn">×</button>
             </div>
         `;
         container.appendChild(item);
-        updateMixOrder();
     }
+    updateMixOrder();
 }
 
-function moveMixItem(name, direction) {
-    const item = document.getElementById('mix-item-' + name);
+function moveMixItem(btn, direction) {
+    // Find the parent item relative to the button clicked
+    const item = btn.closest('.mix-preview-item');
     if (!item) return;
 
     if (direction === -1 && item.previousElementSibling) {
@@ -55,17 +66,18 @@ function updateMixOrder() {
         names.push(item.dataset.name);
     });
 
-    document.getElementById('ordered_songs_input').value = names.join(',');
+    const input = document.getElementById('ordered_songs_input');
+    if (input) input.value = names.join(',');
 
     // Sync Visuals in Grid
     document.querySelectorAll('.song-select-card').forEach(card => {
-        const input = card.querySelector('input');
-        if (names.includes(input.value)) {
+        const checkbox = card.querySelector('input');
+        if (names.includes(checkbox.value)) {
             card.classList.add('selected');
-            input.checked = true;
+            checkbox.checked = true;
         } else {
             card.classList.remove('selected');
-            input.checked = false;
+            checkbox.checked = false;
         }
     });
 
