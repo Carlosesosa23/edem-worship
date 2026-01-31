@@ -1,7 +1,7 @@
 from PIL import Image, ImageOps
 import os
 
-SRC = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'img', 'logo_source.png')
+SRC = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'img', 'logo.jpg')
 OUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'img')
 SIZES = [192, 512]
 
