@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ mix.name }} - EDEM WORSHIP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta name="theme-color" content="#00d084">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container hero">
+            <div class="brand">
+                <a href="/"
+                    style="text-decoration:none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo" alt="logo">
+                    <div>
+                        <h1>EDEM WORSHIP</h1>
+                        <p class="tagline">Mix: {{ mix.name }}</p>
+                    </div>
+                </a>
+            </div>
+            <a href="/" class="btn" style="background: rgba(255,255,255,0.1); box-shadow:none;">&larr; Volver</a>
+        </div>
+    </header>
+
+    <main class="container">
+        {% for song in songs %}
+        <section class="card" style="margin-bottom: 32px; border-left: 4px solid var(--accent);">
+            <div class="card-header">
+                <h2 style="font-size: 1.4rem">{{ loop.index }}. {{ song.name }}</h2>
+            </div>
+            <div class="song-meta" style="margin-bottom: 16px;">
+                <span class="badge">{{ song.tones }}</span>
+            </div>
+
+            <div class="card" style="background: rgba(0,0,0,0.2); border: none;">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px">
+                    <h3 class="muted" style="margin:0">Cifrado</h3>
+                    <div style="display:flex; gap:8px; align-items: center;">
+                        <span class="muted-small">Tono:</span>
+                        <select class="key-selector" data-target="chords-{{ loop.index }}"
+                            onchange="transposeToSpecificKey('chords-{{ loop.index }}', this.value)"
+                            style="background: var(--card); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 4px; border-radius: 4px;">
+                            <option value="">Cargando...</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Display Unified Chart -->
+                <div id="chords-{{ loop.index }}" class="content-block code-font"
+                    data-key="{{ song.current_key or song.tones.split(',')[0] | trim }}"
+                    style="font-family: 'Courier New', monospace; white-space: pre; overflow-x: auto; font-weight: normal; font-size: 1rem;">
+                    {{ song.lyrics }}</div>
+
+                {% if song.chords and song.chords|length > 5 %}
+                <div style="opacity: 0.6; font-size: 0.9em; margin-top: 8px;">
+                    (Old Chords: {{ song.chords }})
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="text-align: right; margin-top: 10px;">
+                <a href="/song/{{ song.id }}" class="muted-small" style="text-decoration: none;">Ver individual
+                    &rarr;</a>
+            </div>
+        </section>
+        {% else %}
+        <p class="muted">Este mix no tiene canciones o las canciones fueron renombradas.</p>
+        {% endfor %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">Hecho con ❤️ — EDEM WORSHIP</div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/transposition.js') }}?v=9"></script>
+</body>
+
+</html>

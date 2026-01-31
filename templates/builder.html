@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Constructor de Mixes - EDEM WORSHIP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta name="theme-color" content="#00d084">
+    <script>
+        function filterSongs(key) {
+            let songs = document.querySelectorAll('.song-option');
+            songs.forEach(s => {
+                let tones = s.dataset.tones.split(',');
+                // Simple partial match or exact match logic
+                if (key === '' || tones.some(t => t.trim() === key)) {
+                    s.style.display = 'flex';
+                } else {
+                    s.style.display = 'none';
+                }
+            });
+            document.getElementById('selected-key-display').innerText = key ? "Filtrado por: " + key : "Mostrando todas";
+        }
+    </script>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container hero">
+            <div class="brand">
+                <a href="/"
+                    style="text-decoration:none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo" alt="logo">
+                    <div>
+                        <h1>EDEM WORSHIP</h1>
+                        <p class="tagline">Constructor de Mixes</p>
+                    </div>
+                </a>
+            </div>
+            <a href="/" class="btn" style="background: rgba(255,255,255,0.1); box-shadow:none;">&larr; Volver</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <div class="card-header"><span class="accent"></span>
+                <h2>Nuevo Mix</h2>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label class="muted">Filtrar por tonalidad:</label>
+                <div class="key-selector">
+                    <button class="key-btn" onclick="filterSongs('')">Todas</button>
+                    <!-- Common keys -->
+                    <button class="key-btn" onclick="filterSongs('C')">C</button>
+                    <button class="key-btn" onclick="filterSongs('D')">D</button>
+                    <button class="key-btn" onclick="filterSongs('E')">E</button>
+                    <button class="key-btn" onclick="filterSongs('F')">F</button>
+                    <button class="key-btn" onclick="filterSongs('G')">G</button>
+                    <button class="key-btn" onclick="filterSongs('A')">A</button>
+                    <button class="key-btn" onclick="filterSongs('B')">B</button>
+                </div>
+                <p id="selected-key-display" class="muted-small" style="margin-top:8px">Mostrando todas</p>
+            </div>
+
+            <form method="POST" action="/add_mix" class="form">
+                <input name="mix_name" placeholder="Nombre del mix (ej: Domingo 27)" required>
+
+                <div class="checkbox-grid"
+                    style="max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+                    {% for s in songs %}
+                    <label class="checkbox song-option" data-tones="{{ s.tones|join(',') }}"
+                        style="width: 100%; display: flex; align-items: center; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.02)">
+                        <input type="checkbox" name="songs" value="{{ s.name }}">
+                        <span style="flex:1">{{ s.name }}</span>
+                        <span class="muted-small">{{ s.tones|join(', ') }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <button class="btn" style="margin-top: 16px;">Crear Mix</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">Hecho con ❤️ — EDEM WORSHIP</div>
+    </footer>
+</body>
+
+</html>
