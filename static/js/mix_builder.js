@@ -3,7 +3,7 @@ function toggleSongMix(name, btn) {
     // But since we are using checkboxes in the original HTML, let's play nice with them
 
     const container = document.getElementById('mix-preview-list');
-    const existing = document.getElementById('mix-item-' + CSS.escape(name));
+    const existing = document.getElementById('mix-item-' + name);
 
     // Checkbox state (the btn is the input itself or we find it)
     const checkbox = document.querySelector(`input[name="songs"][value="${name}"]`);
