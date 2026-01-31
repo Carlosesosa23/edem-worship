@@ -62,8 +62,16 @@ def add_song():
 @app.route("/add_mix", methods=["POST"])
 def add_mix():
     name = request.form["mix_name"]
-    selected = request.form.getlist("songs")
-    db.add_mix(name, ','.join(selected))
+    # Check for ordered list first
+    ordered = request.form.get("ordered_songs")
+    if ordered:
+        selected_str = ordered
+    else:
+        # Fallback to checkboxes
+        selected = request.form.getlist("songs")
+        selected_str = ','.join(selected)
+    
+    db.add_mix(name, selected_str)
     return redirect("/")
 
 @app.route("/delete_song/<int:id>", methods=["POST"])
