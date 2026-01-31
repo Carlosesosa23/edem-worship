@@ -1,8 +1,8 @@
-const CACHE_NAME = 'edem-worship-v2';
+const CACHE_NAME = 'edem-worship-v3';
 const URLS_TO_CACHE = [
-  '/index.html',
+  '/',
   '/static/css/styles.css',
-  '/static/img/logo.png',
+  '/static/img/logo.jpg',
   '/static/img/icon-192.png',
   '/static/img/icon-512.png'
 ];
