@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, redirect
+from flask_socketio import SocketIO, emit
 import db
 import os
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!' # Required for sessions in socketio (even if minimal)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # Initialize DB on startup
 with app.app_context():
@@ -91,6 +94,17 @@ def builder():
         s['tones'] = s['tones'].split(',') if s['tones'] else []
     return render_template("builder.html", songs=songs)
 
+# Live Alerts Routes & Events
+@app.route("/director")
+def director():
+    return render_template("director.html")
+
+@socketio.on('send_alert')
+def handle_alert(data):
+    # data = {'type': 'structure', 'message': 'CORO', 'color': 'blue'}
+    print(f"Alert received: {data}")
+    emit('alert', data, broadcast=True)
+
 if __name__ == "__main__":
     # host='0.0.0.0' allows other devices on the network to connect
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)

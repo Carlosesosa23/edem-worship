@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Director Panel - EDEM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #071021;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            flex-grow: 1;
+            padding-bottom: 10px;
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.1s;
+            text-transform: uppercase;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        /* Categories */
+        .btn-structure {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .btn-dynamic {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        .btn-flow {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        }
+
+        .btn-alert {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            grid-column: span 2;
+        }
+
+        .section-title {
+            grid-column: span 2;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 10px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+
+<body>
+    <h1>DIRECTOR MODE</h1>
+
+    <div class="grid">
+        <!-- Momentos -->
+        <div class="section-title">Momentos</div>
+        <button class="btn-flow" onclick="send('MINISTRACIÓN', 'purple')">Ministración</button>
+        <button class="btn-flow" onclick="send('MOMENTO DE FLUIR', 'purple')">Fluir</button>
+
+        <!-- Dinámica -->
+        <div class="section-title">Dinámica</div>
+        <button class="btn-dynamic" onclick="send('SUBIR INTENSIDAD', 'green')">⏫ SUBIR</button>
+        <button class="btn-dynamic" onclick="send('BAJAR INTENSIDAD', 'orange')">⏬ BAJAR</button>
+
+        <!-- Estructura -->
+        <div class="section-title">Estructura</div>
+        <button class="btn-structure" onclick="send('CORO', 'blue')">CORO</button>
+        <button class="btn-structure" onclick="send('PUENTE', 'blue')">PUENTE</button>
+
+        <!-- Alertas -->
+        <div class="section-title">Alertas</div>
+        <button class="btn-alert" onclick="send('TERMINAR', 'red')">🛑 TERMINAR</button>
+    </div>
+
+    <script>
+        const socket = io();
+
+        function send(msg, color) {
+            // Visual feedback
+            if (navigator.vibrate) navigator.vibrate(50);
+
+            socket.emit('send_alert', {
+                message: msg,
+                color: color
+            });
+        }
+    </script>
+</body>
+
+</html>
