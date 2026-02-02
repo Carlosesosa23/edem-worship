@@ -45,7 +45,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // Connect Socket.IO
     // Assume io is loaded globally
     if (typeof io !== 'undefined') {
-        const socket = io();
+        // Status Indicator for Debugging
+        const statusDot = document.createElement('div');
+        statusDot.style.cssText = `
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4d4d; /* Start Red (Disconnected) */
+            z-index: 10000;
+            pointer-events: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        `;
+        document.body.appendChild(statusDot);
+
+        const socket = io({
+            transports: ['websocket', 'polling'], // Try both
+            reconnection: true
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to Alerts System');
+            statusDot.style.background = '#00d084'; // Green
+            statusDot.style.boxShadow = '0 0 10px #00d084';
+        });
+
+        socket.on('disconnect', () => {
+            console.warn('Disconnected from Alerts System');
+            statusDot.style.background = '#ff4d4d'; // Red
+            statusDot.style.boxShadow = '0 0 5px #ff4d4d';
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Connection Error:', err);
+            statusDot.style.background = 'yellow'; // Yellow for error trial
+        });
 
         let hideTimeout;
 
