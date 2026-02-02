@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Explicitly point to current origin
         const socket = io(window.location.origin, {
-            transports: ['websocket', 'polling'],
+            transports: ['polling', 'websocket'],
             reconnection: true
         });
 
