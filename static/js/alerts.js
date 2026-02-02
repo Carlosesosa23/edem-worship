@@ -45,21 +45,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Connect Socket.IO
     // Assume io is loaded globally
     if (typeof io !== 'undefined') {
-        // Status Indicator for Debugging
-        const statusDot = document.createElement('div');
-        statusDot.style.cssText = `
+        // Debug Status Bar
+        const statusBar = document.createElement('div');
+        statusBar.id = 'debug-status-bar';
+        statusBar.style.cssText = `
             position: fixed;
-            bottom: 10px;
-            left: 10px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ff4d4d; /* Start Red (Disconnected) */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            font-size: 10px;
+            padding: 4px;
+            text-align: center;
             z-index: 10000;
             pointer-events: none;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            font-family: monospace;
         `;
-        document.body.appendChild(statusDot);
+        statusBar.innerText = 'Initializing...';
+        document.body.appendChild(statusBar);
 
         const socket = io({
             transports: ['websocket', 'polling'], // Try both
