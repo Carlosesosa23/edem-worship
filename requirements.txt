@@ -3,3 +3,6 @@ gunicorn
 psycopg2-binary
 flask-socketio
 eventlet
+flask-login
+flask-login
+flask-login

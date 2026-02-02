@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - EDEM WORSHIP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #071021;
+        }
+
+        .login-card {
+            background: #111a2e;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .login-logo {
+            width: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent, #00d084);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .flash {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <img src="{{ url_for('static', filename='img/logo.jpg') }}" class="login-logo">
+        <h1>Iniciar Sesión</h1>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input name="username" placeholder="Usuario" required autocomplete="username">
+            <input name="password" type="password" placeholder="Contraseña" required autocomplete="current-password">
+            <label
+                style="display:flex; align-items:center; gap:8px; font-size:0.9rem; margin: 10px 0; color: rgba(255,255,255,0.7);">
+                <input type="checkbox" name="remember" style="width:auto; margin:0;">
+                No cerrar sesión
+            </label>
+            <button type="submit">Entrar</button>
+        </form>
+        <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.5;">EDEM WORSHIP</p>
+    </div>
+</body>
+
+</html>
