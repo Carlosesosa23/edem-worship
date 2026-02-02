@@ -24,7 +24,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 users_db = {
     "admin": {"password": generate_password_hash("admin123"), "role": "admin"},
-    "musico": {"password": generate_password_hash("edem2024"), "role": "musico"}
+    "musico": {"password": generate_password_hash("edem2026"), "role": "musico"}
 }
 
 class User(UserMixin):
