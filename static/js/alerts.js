@@ -45,45 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Connect Socket.IO
     // Assume io is loaded globally
     if (typeof io !== 'undefined') {
-        // Debug Status Bar
-        const statusBar = document.createElement('div');
-        statusBar.id = 'debug-status-bar';
-        statusBar.style.cssText = `
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            font-size: 10px;
-            padding: 4px;
-            text-align: center;
-            z-index: 10000;
-            pointer-events: none;
-            font-family: monospace;
-        `;
-        statusBar.innerText = 'Initializing...';
-        document.body.appendChild(statusBar);
-
-        // Explicitly point to current origin
+        // Explicitly point to current origin with robust transport
         const socket = io(window.location.origin, {
             transports: ['polling', 'websocket'],
             reconnection: true
-        });
-
-        socket.on('connect', () => {
-            statusBar.innerText = 'Connected ✅';
-            statusBar.style.background = 'rgba(0, 100, 0, 0.8)';
-        });
-
-        socket.on('disconnect', (reason) => {
-            statusBar.innerText = 'Disconnected 🔴: ' + reason;
-            statusBar.style.background = 'rgba(100, 0, 0, 0.8)';
-        });
-
-        socket.on('connect_error', (err) => {
-            statusBar.innerText = 'Error ⚠️: ' + err.message;
-            statusBar.style.background = 'rgba(100, 100, 0, 0.8)';
         });
 
         let hideTimeout;
