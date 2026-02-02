@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edem-worship-v7';
+const CACHE_NAME = 'edem-worship-v8';
 const URLS_TO_CACHE = [
   '/',
   '/static/css/styles.css',

@@ -65,26 +65,25 @@ document.addEventListener('DOMContentLoaded', () => {
         statusBar.innerText = 'Initializing...';
         document.body.appendChild(statusBar);
 
-        const socket = io({
-            transports: ['websocket', 'polling'], // Try both
+        // Explicitly point to current origin
+        const socket = io(window.location.origin, {
+            transports: ['websocket', 'polling'],
             reconnection: true
         });
 
         socket.on('connect', () => {
-            console.log('Connected to Alerts System');
-            statusDot.style.background = '#00d084'; // Green
-            statusDot.style.boxShadow = '0 0 10px #00d084';
+            statusBar.innerText = 'Connected ✅';
+            statusBar.style.background = 'rgba(0, 100, 0, 0.8)';
         });
 
-        socket.on('disconnect', () => {
-            console.warn('Disconnected from Alerts System');
-            statusDot.style.background = '#ff4d4d'; // Red
-            statusDot.style.boxShadow = '0 0 5px #ff4d4d';
+        socket.on('disconnect', (reason) => {
+            statusBar.innerText = 'Disconnected 🔴: ' + reason;
+            statusBar.style.background = 'rgba(100, 0, 0, 0.8)';
         });
 
         socket.on('connect_error', (err) => {
-            console.error('Connection Error:', err);
-            statusDot.style.background = 'yellow'; // Yellow for error trial
+            statusBar.innerText = 'Error ⚠️: ' + err.message;
+            statusBar.style.background = 'rgba(100, 100, 0, 0.8)';
         });
 
         let hideTimeout;
@@ -108,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Show
             overlay.style.opacity = '1';
-            overlay.style.pointerEvents = 'auto'; // Block interaction while alert is up? Maybe better not to block completely but okay for now.
+            overlay.style.pointerEvents = 'auto';
 
             // Haptic
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
