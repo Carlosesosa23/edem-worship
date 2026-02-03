@@ -61,9 +61,23 @@ def init_db():
                 tones TEXT,
                 best TEXT,
                 lyrics TEXT,
-                chords TEXT
+                chords TEXT,
+                audio_url TEXT
             );
         '''
+        create_mixes = '''
+            CREATE TABLE IF NOT EXISTS mixes (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                songs TEXT
+            );
+        '''
+        
+        # Migration for existing Postgres tables
+        try:
+            run_sql("ALTER TABLE songs ADD COLUMN audio_url TEXT", commit=True)
+        except Exception as e:
+            print(f"Migration: audio_url might already exist: {e}")
         create_mixes = '''
             CREATE TABLE IF NOT EXISTS mixes (
                 id SERIAL PRIMARY KEY,
