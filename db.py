@@ -4,13 +4,18 @@ import sqlite3
 # Use local SQLite file
 DB_FILE = 'worship.db'
 
+# Global pool variable
+POOL = None
+
 def get_conn():
     url = os.environ.get('DATABASE_URL')
     if url:
-        # Cloud / Postgres
-        import psycopg2
-        from psycopg2.extras import RealDictCursor
-        return psycopg2.connect(url, cursor_factory=RealDictCursor)
+        # Cloud / Postgres with Pooling
+        global POOL
+        if POOL is None:
+            from psycopg2 import pool
+            POOL = pool.SimpleConnectionPool(1, 20, url)
+        return POOL.getconn()
     else:
         # Local / SQLite
         conn = sqlite3.connect(DB_FILE)
@@ -22,31 +27,49 @@ def run_sql(sql, params=(), commit=False, fetch=None):
     Generic runner to handle syntax diffs (? vs %s) and connection lifecycle.
     fetch: 'all', 'one', or None
     """
+    url = os.environ.get('DATABASE_URL')
     conn = get_conn()
     
     # Adapter for Postgres syntax
-    if os.environ.get('DATABASE_URL'):
+    if url:
         sql = sql.replace('?', '%s')
     
-    cur = conn.cursor()
-    
+    # Prepare cursor options
+    cur_args = {}
+    if url:
+        from psycopg2.extras import RealDictCursor
+        cur_args['cursor_factory'] = RealDictCursor
+
     try:
-        cur.execute(sql, params)
-        if commit:
-            conn.commit()
-            
-        res = None
-        if fetch == 'all':
-            # Convert to pure dicts
-            res = [dict(r) for r in cur.fetchall()]
-        elif fetch == 'one':
-            row = cur.fetchone()
-            res = dict(row) if row else None
-            
-        return res
+        cur = conn.cursor(**cur_args)
+        try:
+            cur.execute(sql, params)
+            if commit:
+                conn.commit()
+                
+            res = None
+            if fetch == 'all':
+                # Convert to pure dicts
+                res = [dict(r) for r in cur.fetchall()]
+            elif fetch == 'one':
+                row = cur.fetchone()
+                res = dict(row) if row else None
+                
+            return res
+        finally:
+            cur.close()
+    except Exception as e:
+        # If error, rollback (important for pooled connections)
+        if url:
+            conn.rollback()
+        raise e
     finally:
-        cur.close()
-        conn.close()
+        if url:
+            # Return connection to pool
+            POOL.putconn(conn)
+        else:
+            # Close local sqlite connection
+            conn.close()
 
 def init_db():
     url = os.environ.get('DATABASE_URL')
