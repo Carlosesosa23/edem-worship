@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edem-worship-v13';
+const CACHE_NAME = 'edem-worship-v14';
 const URLS_TO_CACHE = [
   '/',
   '/director',

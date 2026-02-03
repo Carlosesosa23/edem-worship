@@ -119,7 +119,8 @@ def add_song():
     best = request.form["best"]
     lyrics = request.form.get("lyrics", "")
     chords = request.form.get("chords", "")
-    db.add_song(name, tones, best, lyrics, chords)
+    audio_url = request.form.get("audio_url", "")
+    db.add_song(name, tones, best, lyrics, chords, audio_url)
     return redirect("/")
 
 @app.route("/add_mix", methods=["POST"])

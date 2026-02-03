@@ -127,13 +127,15 @@ def init_db():
             cur.execute("ALTER TABLE songs ADD COLUMN lyrics TEXT")
         if 'chords' not in columns:
             cur.execute("ALTER TABLE songs ADD COLUMN chords TEXT")
+        if 'audio_url' not in columns:
+            cur.execute("ALTER TABLE songs ADD COLUMN audio_url TEXT")
         conn.commit()
         conn.close()
 
 
-def add_song(name, tones, best, lyrics="", chords=""):
-    run_sql('INSERT INTO songs (name, tones, best, lyrics, chords) VALUES (?, ?, ?, ?, ?)', 
-            (name, tones, best, lyrics, chords), commit=True)
+def add_song(name, tones, best, lyrics="", chords="", audio_url=""):
+    run_sql('INSERT INTO songs (name, tones, best, lyrics, chords, audio_url) VALUES (?, ?, ?, ?, ?, ?)', 
+            (name, tones, best, lyrics, chords, audio_url), commit=True)
 
 def get_songs():
     return run_sql('SELECT * FROM songs ORDER BY id DESC', fetch='all')
