@@ -154,6 +154,10 @@ def add_song(name, tones, best, lyrics="", chords="", audio_url=""):
 def get_songs():
     return run_sql('SELECT * FROM songs ORDER BY id DESC', fetch='all')
 
+def get_songs_metadata():
+    """Lightweight query for lists (skips lyrics/chords/audio_url)"""
+    return run_sql('SELECT id, name, tones, best FROM songs ORDER BY id DESC', fetch='all')
+
 def get_song(id):
     return run_sql('SELECT * FROM songs WHERE id = ?', (id,), fetch='one')
 

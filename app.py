@@ -68,7 +68,7 @@ with app.app_context():
 @app.route("/")
 @login_required
 def index():
-    songs = db.get_songs()
+    songs = db.get_songs_metadata()
     mixes = db.get_mixes()
     # Process mixes to have list of song names
     for m in mixes:
