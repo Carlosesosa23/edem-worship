@@ -7,9 +7,21 @@
     <title>Director Panel - EDEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #071021;
+            --text: #ffffff;
+            --btn-text: #ffffff;
+        }
+
+        body.light-mode {
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --btn-text: #ffffff;
+        }
+
         body {
-            background-color: #071021;
-            color: white;
+            background-color: var(--bg);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 10px;
@@ -17,13 +29,42 @@
             flex-direction: column;
             height: 100vh;
             box-sizing: border-box;
+            transition: background-color 0.3s ease;
         }
 
         h1 {
-            margin: 0 0 10px 0;
+            margin: 0;
             font-size: 1.2rem;
             text-align: center;
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text);
+            opacity: 0.7;
+            flex-grow: 1;
+            /* Push toggle to side */
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.light-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.1);
         }
 
         .grid {
@@ -40,7 +81,7 @@
             font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
-            color: white;
+            color: var(--btn-text);
             transition: transform 0.1s;
             text-transform: uppercase;
         }
@@ -73,7 +114,8 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.3);
+            color: var(--text);
+            opacity: 0.4;
             margin-top: 10px;
         }
     </style>
@@ -81,7 +123,11 @@
 </head>
 
 <body>
-    <h1>DIRECTOR MODE</h1>
+    <div class="header-row">
+        <a href="/" style="text-decoration:none; font-size:1.5rem;">🏠</a>
+        <h1>DIRECTOR MODE</h1>
+        <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    </div>
 
     <div class="grid">
         <!-- Momentos -->
@@ -106,6 +152,20 @@
 
     <script>
         const socket = io();
+
+        // Theme Logic
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-mode');
+            document.getElementById('theme-toggle').innerText = '☀️';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const theme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+            document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+            localStorage.setItem('theme', theme);
+        }
 
         function send(msg, color) {
             // Visual feedback

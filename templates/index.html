@@ -34,8 +34,24 @@
                     <p class="tagline">Gestor de canciones y mixes</p>
                 </div>
             </div>
+            <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
         </div>
     </header>
+    <script>
+        // Check local storage for theme
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-mode');
+            document.getElementById('theme-toggle').innerText = '☀️';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const theme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+            document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+            localStorage.setItem('theme', theme);
+        }
+    </script>
 
     <main class="container">
         <section class="card">

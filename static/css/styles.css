@@ -1,11 +1,33 @@
 :root {
     --bg: #0f1720;
+    --bg-gradient: linear-gradient(180deg, #0f1720 0%, #071021 100%);
     --card: #0f1728;
+    --card-gradient: linear-gradient(180deg, #0f1728, rgba(10, 15, 20, 0.6));
+    --text-main: #e6eef6;
     --muted: #9aa4b2;
     --accent: #00d084;
     --accent-2: #00b36d;
     --glass: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.03);
+    --border-card: rgba(255, 255, 255, 0.02);
+    --input-bg: rgba(255, 255, 255, 0.02);
     --max-width: 1080px;
+}
+
+body.light-mode {
+    --bg: #f8fafc;
+    --bg-gradient: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    --card: #ffffff;
+    --card-gradient: linear-gradient(180deg, #ffffff, #f1f5f9);
+    --text-main: #1e293b;
+    --muted: #64748b;
+    --accent: #059669;
+    /* Darker green for contrast on white */
+    --accent-2: #047857;
+    --glass: rgba(0, 0, 0, 0.04);
+    --border: rgba(0, 0, 0, 0.08);
+    --border-card: rgba(0, 0, 0, 0.1);
+    --input-bg: rgba(0, 0, 0, 0.03);
 }
 
 * {
@@ -20,11 +42,12 @@ body {
 body {
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-    background: linear-gradient(180deg, var(--bg) 0%, #071021 100%);
-    color: #e6eef6;
+    background: var(--bg-gradient);
+    color: var(--text-main);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: 0.1px;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -74,12 +97,12 @@ main {
 }
 
 .card {
-    background: linear-gradient(180deg, var(--card), rgba(10, 15, 20, 0.6));
+    background: var(--card-gradient);
     padding: 18px;
     border-radius: 12px;
-    box-shadow: 0 8px 28px rgba(2, 8, 23, 0.6);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
     margin-bottom: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-card);
     overflow: hidden
 }
 
@@ -112,13 +135,13 @@ main {
 .mix-item {
     padding: 10px;
     border-radius: 8px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    background: var(--glass);
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
     backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.02)
+    border: 1px solid var(--border)
 }
 
 .song-name {
@@ -145,8 +168,8 @@ main {
 .form input,
 .form select,
 textarea {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
     padding: 10px;
     border-radius: 8px;
     color: inherit;
@@ -251,6 +274,29 @@ input,
     }
 }
 
+/* Theme Toggle */
+.theme-toggle {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    /* Was 'inherit' but text-main is safer */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    margin-left: 12px;
+}
+
+.theme-toggle:hover {
+    background: var(--border);
+    transform: scale(1.05);
+}
+
 /* New utils */
 .content-block {
     white-space: pre-wrap;
@@ -262,8 +308,9 @@ input,
 .code-font {
     font-family: 'Courier New', monospace;
     font-weight: bold;
-    color: #ffffff;
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0.6), 0 0 12px rgba(255, 255, 255, 0.3);
+    color: var(--text-main);
+    /* Remove text-shadow in light mode via variable or reset? For now, keep it simple */
+    text-shadow: none;
 }
 
 .chord-highlight {

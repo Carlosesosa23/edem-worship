@@ -23,9 +23,26 @@
                     </div>
                 </a>
             </div>
-            <a href="/" class="btn" style="background: rgba(255,255,255,0.1); box-shadow:none;">&larr; Volver</a>
+            <div style="display:flex; align-items:center;">
+                <a href="/" class="btn" style="background: rgba(255,255,255,0.1); box-shadow:none;">&larr; Volver</a>
+                <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()"
+                    aria-label="Cambiar tema">🌙</button>
+            </div>
         </div>
     </header>
+    <script>
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-mode');
+            document.getElementById('theme-toggle').innerText = '☀️';
+        }
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const theme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+            document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+            localStorage.setItem('theme', theme);
+        }
+    </script>
 
     <main class="container">
         <section class="card">
