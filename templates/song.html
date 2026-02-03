@@ -11,25 +11,6 @@
 </head>
 
 <body>
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const overlay = document.getElementById('loading-overlay');
-            document.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const href = link.getAttribute('href');
-                    if (href && href.startsWith('/') && !href.startsWith('#') && !e.ctrlKey) {
-                        overlay.classList.add('active');
-                    }
-                });
-            });
-            window.addEventListener('pageshow', () => {
-                overlay.classList.remove('active');
-            });
-        });
-    </script>
     <header class="site-header">
         <div class="container hero">
             <div class="brand">

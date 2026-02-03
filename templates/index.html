@@ -24,37 +24,6 @@
 </head>
 
 <body>
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-    </div>
-    <script>
-        // Show spinner on link click or form submit
-        document.addEventListener('DOMContentLoaded', () => {
-            const overlay = document.getElementById('loading-overlay');
-
-            // Intercept links
-            document.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const href = link.getAttribute('href');
-                    if (href && href.startsWith('/') && !href.startsWith('#') && !e.ctrlKey && !e.metaKey) {
-                        overlay.classList.add('active');
-                    }
-                });
-            });
-
-            // Intercept forms
-            document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', () => {
-                    overlay.classList.add('active');
-                });
-            });
-
-            // Hide on back/pageshow (bfcache support)
-            window.addEventListener('pageshow', () => {
-                overlay.classList.remove('active');
-            });
-        });
-    </script>
     <header class="site-header">
         <div class="container hero">
             <div class="brand">
