@@ -11,6 +11,7 @@
     --border: rgba(255, 255, 255, 0.03);
     --border-card: rgba(255, 255, 255, 0.02);
     --input-bg: rgba(255, 255, 255, 0.02);
+    --chord-color: #00f3ff;
     --max-width: 1080px;
 }
 
@@ -28,6 +29,8 @@ body.light-mode {
     --border: rgba(0, 0, 0, 0.08);
     --border-card: rgba(0, 0, 0, 0.1);
     --input-bg: rgba(0, 0, 0, 0.03);
+    --chord-color: #008000;
+    /* Dark Green (readable) */
 }
 
 * {
@@ -313,9 +316,11 @@ input,
     text-shadow: none;
 }
 
+.chord,
 .chord-highlight {
-    color: #00f3ff;
-    text-shadow: 0 0 5px rgba(0, 243, 255, 0.8), 0 0 10px rgba(0, 243, 255, 0.4);
+    color: var(--chord-color);
+    text-shadow: none;
+    /* Shadow often reduces readability on white */
     font-weight: bold;
 }
 
