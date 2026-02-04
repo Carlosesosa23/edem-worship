@@ -14,7 +14,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # SocketIO Setup
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+# SocketIO Setup
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # --- User Model & Mock DB (For simplicity - upgrade to SQL later if needed) ---
 # En production we should use a real DB table, but for this file-based app, simple dict is okay for now.
