@@ -9,35 +9,54 @@ import time
 # Global pool variable
 POOL = None
 
-def get_conn():
+# Global pool variable
+POOL = None
+
+def get_conn(retry_count=0):
     url = os.environ.get('DATABASE_URL')
     if url:
         # Cloud / Postgres with Pooling
         global POOL
         if POOL is None:
-            print("🌊 Initializing DB Pool...")
+            print("🌊 Initializing Threaded DB Pool...")
             from psycopg2 import pool
-            POOL = pool.SimpleConnectionPool(1, 10, url) # Lowered max to 10 to be safe
+            # Use ThreadedConnectionPool for thread safety with gunicorn threads
+            POOL = pool.ThreadedConnectionPool(1, 10, url)
         
-        conn = POOL.getconn()
+        try:
+            conn = POOL.getconn()
+        except Exception as e:
+            print(f"⚠️ Pool exhausted or error: {e}")
+            # Fallback: create a temporary fresh connection if pool fails
+            import psycopg2
+            from psycopg2.extras import RealDictCursor
+            return psycopg2.connect(url, cursor_factory=RealDictCursor)
+
         # Health Check: Verify connection involves no transaction and is open
         try:
             if conn.closed:
                 print("♻️ Connection closed, getting a new one...")
                 POOL.putconn(conn, close=True)
-                return get_conn()
-                
-            # Optional: Quick check (can add 10-20ms latency but ensures safety)
-            # cursor = conn.cursor()
-            # cursor.execute('SELECT 1')
-            # cursor.close()
+                if retry_count < 3:
+                    return get_conn(retry_count + 1)
+                else:
+                    # After 3 retries, force a fresh non-pooled connection to survive
+                    import psycopg2
+                    from psycopg2.extras import RealDictCursor
+                    return psycopg2.connect(url, cursor_factory=RealDictCursor)
         except Exception as e:
             print(f"⚠️ Connection bad ({e}), resetting...")
             try:
                 POOL.putconn(conn, close=True)
             except:
                 pass
-            return get_conn()
+            if retry_count < 3:
+                return get_conn(retry_count + 1)
+            else:
+                 # Fallback
+                import psycopg2
+                from psycopg2.extras import RealDictCursor
+                return psycopg2.connect(url, cursor_factory=RealDictCursor)
             
         return conn
     else:
