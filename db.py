@@ -4,6 +4,8 @@ import sqlite3
 # Use local SQLite file
 DB_FILE = 'worship.db'
 
+import time
+
 # Global pool variable
 POOL = None
 
@@ -13,9 +15,31 @@ def get_conn():
         # Cloud / Postgres with Pooling
         global POOL
         if POOL is None:
+            print("🌊 Initializing DB Pool...")
             from psycopg2 import pool
-            POOL = pool.SimpleConnectionPool(1, 20, url)
-        return POOL.getconn()
+            POOL = pool.SimpleConnectionPool(1, 10, url) # Lowered max to 10 to be safe
+        
+        conn = POOL.getconn()
+        # Health Check: Verify connection involves no transaction and is open
+        try:
+            if conn.closed:
+                print("♻️ Connection closed, getting a new one...")
+                POOL.putconn(conn, close=True)
+                return get_conn()
+                
+            # Optional: Quick check (can add 10-20ms latency but ensures safety)
+            # cursor = conn.cursor()
+            # cursor.execute('SELECT 1')
+            # cursor.close()
+        except Exception as e:
+            print(f"⚠️ Connection bad ({e}), resetting...")
+            try:
+                POOL.putconn(conn, close=True)
+            except:
+                pass
+            return get_conn()
+            
+        return conn
     else:
         # Local / SQLite
         conn = sqlite3.connect(DB_FILE)
@@ -27,8 +51,16 @@ def run_sql(sql, params=(), commit=False, fetch=None):
     Generic runner to handle syntax diffs (? vs %s) and connection lifecycle.
     fetch: 'all', 'one', or None
     """
+    start_time = time.time()
     url = os.environ.get('DATABASE_URL')
-    conn = get_conn()
+    
+    try:
+        conn = get_conn()
+    except Exception as e:
+        print(f"❌ Error getting connection: {e}")
+        raise e
+        
+    conn_time = time.time()
     
     # Adapter for Postgres syntax
     if url:
@@ -44,6 +76,9 @@ def run_sql(sql, params=(), commit=False, fetch=None):
         cur = conn.cursor(**cur_args)
         try:
             cur.execute(sql, params)
+            
+            exec_time = time.time()
+            
             if commit:
                 conn.commit()
                 
@@ -54,12 +89,21 @@ def run_sql(sql, params=(), commit=False, fetch=None):
             elif fetch == 'one':
                 row = cur.fetchone()
                 res = dict(row) if row else None
+            
+            end_time = time.time()
+            total_duration = end_time - start_time
+            if total_duration > 1.0:
+                print(f"🐢 SLOW QUERY ({total_duration:.2f}s): {sql[:50]}...")
+                print(f"   - GetConn: {conn_time - start_time:.4f}s")
+                print(f"   - Execute: {exec_time - conn_time:.4f}s")
+                print(f"   - Fetch/Commit: {end_time - exec_time:.4f}s")
                 
             return res
         finally:
             cur.close()
     except Exception as e:
         # If error, rollback (important for pooled connections)
+        print(f"❌ SQL Error: {e}")
         if url:
             conn.rollback()
         raise e
