@@ -9,17 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%; 
+        width: 100vw;
+        height: 100vh; 
         pointer-events: none; /* Let clicks pass through if transparent */
-        z-index: 9999;
+        z-index: 2147483647; /* Max z-index to cover everything */
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(0,0,0,0.85);
+        background: rgba(0,0,0,0.85); /* Darker background for contrast */
         opacity: 0;
         transition: opacity 0.3s ease;
         flex-direction: column;
+        backdrop-filter: blur(4px); /* Blur behind alert */
     `;
 
     // Message container
@@ -28,15 +29,17 @@ document.addEventListener('DOMContentLoaded', () => {
     msgBox.style.cssText = `
         color: white;
         font-family: 'Inter', sans-serif;
-        font-weight: 800;
-        font-size: 12vw;
+        font-weight: 900;
+        font-size: clamp(2rem, 12vw, 6rem); /* Responsive font size */
         text-align: center;
         text-transform: uppercase;
-        text-shadow: 0 0 20px rgba(255,255,255,0.5);
-        padding: 20px;
+        text-shadow: 0 0 20px rgba(0,0,0,0.8);
+        padding: 2rem;
         border: 4px solid white;
         border-radius: 16px;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0,0,0,0.6);
+        max-width: 90%;
+        line-height: 1.1;
     `;
 
     overlay.appendChild(msgBox);
