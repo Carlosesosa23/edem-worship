@@ -150,8 +150,35 @@
         <button class="btn-alert" onclick="send('TERMINAR', 'red')">🛑 TERMINAR</button>
     </div>
 
+    <div id="connection-status">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Desconectado</span>
+    </div>
+
     <script>
-        const socket = io();
+        const socket = io({
+            transports: ['websocket', 'polling']
+        });
+
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+
+        socket.on('connect', () => {
+            statusDot.style.backgroundColor = '#00d084';
+            statusText.innerText = 'Conectado';
+            console.log('Director connected');
+        });
+
+        socket.on('disconnect', () => {
+            statusDot.style.backgroundColor = '#ff4d4d';
+            statusText.innerText = 'Desconectado';
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Connection Error:', err);
+            statusDot.style.backgroundColor = 'orange';
+            statusText.innerText = 'Error de Conexión';
+        });
 
         // Theme Logic
         const currentTheme = localStorage.getItem('theme');
