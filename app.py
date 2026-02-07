@@ -1,3 +1,7 @@
+# Monkey Patch must be the very first thing!
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_socketio import SocketIO, emit
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -16,8 +20,7 @@ login_manager.login_view = 'login'
 login_manager.session_protection = "basic"
 
 # SocketIO Setup
-# SocketIO Setup
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # --- User Model & Mock DB (For simplicity - upgrade to SQL later if needed) ---
 # En production we should use a real DB table, but for this file-based app, simple dict is okay for now.
