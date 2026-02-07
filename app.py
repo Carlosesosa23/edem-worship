@@ -2,6 +2,10 @@
 import eventlet
 eventlet.monkey_patch()
 
+# Patch psycopg2 for non-blocking I/O
+from psycogreen.eventlet import patch_psycopg
+patch_psycopg()
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_socketio import SocketIO, emit
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user

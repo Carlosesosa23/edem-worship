@@ -6,3 +6,4 @@ eventlet
 flask-login
 flask-login
 flask-login
+psycogreen
