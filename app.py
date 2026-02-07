@@ -12,6 +12,8 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key_change_i
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+# Relax session protection to allow multiple devices (concurrent admins) without issues
+login_manager.session_protection = "basic"
 
 # SocketIO Setup
 # SocketIO Setup
@@ -21,10 +23,12 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 # En production we should use a real DB table, but for this file-based app, simple dict is okay for now.
 # Default Users:
 # admin / admin123
-# musico / edem2024
+# media / edem2026 (New second admin)
+# musico / edem2026
 
 users_db = {
     "admin": {"password": generate_password_hash("admin123"), "role": "admin"},
+    "media": {"password": generate_password_hash("edem2026"), "role": "admin"},
     "musico": {"password": generate_password_hash("edem2026"), "role": "musico"}
 }
 
