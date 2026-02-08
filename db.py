@@ -18,10 +18,10 @@ def get_conn(retry_count=0):
         # Cloud / Postgres with Pooling
         global POOL
         if POOL is None:
-            print("🌊 Initializing Threaded DB Pool...")
+            print("🌊 Initializing Standard DB Pool (20 connections)...")
             from psycopg2 import pool
-            # Use ThreadedConnectionPool for thread safety with gunicorn threads
-            POOL = pool.ThreadedConnectionPool(1, 10, url)
+            # SimpleConnectionPool is sufficient with psycogreen/eventlet
+            POOL = pool.SimpleConnectionPool(1, 20, url)
         
         try:
             conn = POOL.getconn()
