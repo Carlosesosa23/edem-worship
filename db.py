@@ -119,6 +119,8 @@ def run_sql(sql, params=(), commit=False, fetch=None):
             
             if total_duration > 1.0:
                 print(f"🐢 SLOW QUERY DETECTED!")
+            
+            return res
         finally:
             cur.close()
     except Exception as e:
