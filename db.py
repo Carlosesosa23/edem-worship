@@ -110,14 +110,15 @@ def run_sql(sql, params=(), commit=False, fetch=None):
                 res = dict(row) if row else None
             
             end_time = time.time()
+            end_time = time.time()
             total_duration = end_time - start_time
+            
+            # Always print duration for debugging the 6s issue
+            query_preview = sql.replace('\n', ' ').strip()[:50]
+            print(f"⏱️ SQL ({total_duration:.3f}s): {query_preview} | Conn: {conn_time - start_time:.3f}s | Exec: {exec_time - conn_time:.3f}s")
+            
             if total_duration > 1.0:
-                print(f"🐢 SLOW QUERY ({total_duration:.2f}s): {sql[:50]}...")
-                print(f"   - GetConn: {conn_time - start_time:.4f}s")
-                print(f"   - Execute: {exec_time - conn_time:.4f}s")
-                print(f"   - Fetch/Commit: {end_time - exec_time:.4f}s")
-                
-            return res
+                print(f"🐢 SLOW QUERY DETECTED!")
         finally:
             cur.close()
     except Exception as e:
@@ -158,12 +159,25 @@ def init_db():
                 songs TEXT
             );
         '''
+        create_singers = '''
+            CREATE TABLE IF NOT EXISTS singers (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                max_note TEXT
+            );
+        '''
         
         # Migration for existing Postgres tables
         try:
             run_sql("ALTER TABLE songs ADD COLUMN audio_url TEXT", commit=True)
         except Exception as e:
-            print(f"Migration: audio_url might already exist: {e}")
+            # print(f"Migration: audio_url might already exist: {e}")
+            pass
+
+        try:
+            run_sql("ALTER TABLE songs ADD COLUMN top_note TEXT", commit=True)
+        except Exception as e:
+            pass # top_note might already exist
         create_mixes = '''
             CREATE TABLE IF NOT EXISTS mixes (
                 id SERIAL PRIMARY KEY,
@@ -190,9 +204,17 @@ def init_db():
                 songs TEXT
             );
         '''
+        create_singers = '''
+            CREATE TABLE IF NOT EXISTS singers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                max_note TEXT
+            );
+        '''
 
     run_sql(create_songs, commit=True)
     run_sql(create_mixes, commit=True)
+    run_sql(create_singers, commit=True)
 
     # Migrations (Simple column check)
     # This is trickier abstractly, so we do a quick check only if finding columns is easy
@@ -229,6 +251,8 @@ def init_db():
             cur.execute("ALTER TABLE songs ADD COLUMN chords TEXT")
         if 'audio_url' not in columns:
             cur.execute("ALTER TABLE songs ADD COLUMN audio_url TEXT")
+        if 'top_note' not in columns:
+            cur.execute("ALTER TABLE songs ADD COLUMN top_note TEXT")
         conn.commit()
         conn.close()
 
