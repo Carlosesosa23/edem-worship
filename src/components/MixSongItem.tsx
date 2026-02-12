@@ -103,7 +103,7 @@ export function MixSongItem({ song, index }: MixSongItemProps) {
             </div>
 
             {/* Content */}
-            <div className="whitespace-pre-wrap font-mono text-base leading-loose text-text-main px-1">
+            <div translate="no" className="notranslate whitespace-pre-wrap font-mono text-base leading-loose text-text-main px-1">
                 {transposedContent.split('\n').map((line, i) => {
                     const hasChords = line.includes('[');
 

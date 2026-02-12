@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSongs } from '../contexts/SongsContext';
 import { transposeContent, NOTES, getNoteIndex, MAJOR_KEYS, MINOR_KEYS, getSemitonesDifference } from '../lib/transpose';
-import { ArrowLeft, Edit, Music, User, Mic, Youtube } from 'lucide-react';
+import { ArrowLeft, Edit, Music, User, Mic, Youtube, Trash2 } from 'lucide-react';
 import { LiveBanner } from '../components/LiveBanner';
 import { DirectorControls } from '../components/DirectorControls';
 
@@ -15,7 +15,7 @@ function getYouTubeID(url: string) {
 export function SongViewer() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { songs } = useSongs();
+    const { songs, deleteSong } = useSongs();
 
     const song = songs.find(s => s.id === id);
     const [transpose, setTranspose] = useState(0);
@@ -77,6 +77,22 @@ export function SongViewer() {
                     <Link to={`/edit/${song.id}`} className="p-2 hover:bg-white/10 rounded-lg text-text-muted hover:text-text-main transition-colors">
                         <Edit size={20} />
                     </Link>
+                    <button
+                        onClick={async () => {
+                            if (window.confirm('¿Estás seguro que deseas ELIMINAR esta canción permanentemente?')) {
+                                try {
+                                    await deleteSong(song.id);
+                                    navigate('/songs');
+                                } catch (error) {
+                                    alert('Error al eliminar');
+                                }
+                            }
+                        }}
+                        className="p-2 hover:bg-red-500/20 text-red-400 hover:text-red-500 rounded-lg transition-colors"
+                        title="Eliminar canción"
+                    >
+                        <Trash2 size={20} />
+                    </button>
                 </div>
             </div>
 
@@ -94,7 +110,7 @@ export function SongViewer() {
                     )}
                 </div>
 
-                <div className="whitespace-pre-wrap font-mono text-lg leading-loose text-text-main song-content">
+                <div translate="no" className="notranslate whitespace-pre-wrap font-mono text-lg leading-loose text-text-main song-content">
                     {transposedContent.split('\n').map((line, i) => {
                         // Line contains chords if it has brackets
                         const hasChords = line.includes('[');

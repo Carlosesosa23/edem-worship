@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMixes } from '../contexts/MixesContext';
 import { useSongs } from '../contexts/SongsContext';
-import { ArrowLeft, Calendar, Music, List } from 'lucide-react';
+import { ArrowLeft, Calendar, Music, List, Trash2 } from 'lucide-react';
 import { MixSongItem } from '../components/MixSongItem';
 import { Link } from 'react-router-dom';
 import { LiveBanner } from '../components/LiveBanner';
@@ -11,7 +11,7 @@ import { DirectorControls } from '../components/DirectorControls';
 export function MixViewer() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { mixes } = useMixes();
+    const { mixes, deleteMix } = useMixes();
     const { songs } = useSongs();
 
     // Create Refs for quick scrolling
@@ -49,6 +49,22 @@ export function MixViewer() {
                             <span>{new Date(mix.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                         </div>
                     </div>
+                    <button
+                        onClick={async () => {
+                            if (window.confirm('¿Estás seguro que deseas ELIMINAR este mix permanentemente?')) {
+                                try {
+                                    await deleteMix(mix.id);
+                                    navigate('/mixes');
+                                } catch (error) {
+                                    alert('Error al eliminar');
+                                }
+                            }
+                        }}
+                        className="p-2 hover:bg-red-500/20 text-red-400 hover:text-red-500 rounded-lg transition-colors"
+                        title="Eliminar mix"
+                    >
+                        <Trash2 size={20} />
+                    </button>
                 </div>
 
                 {/* Quick Jump Bar */}
@@ -100,6 +116,6 @@ export function MixViewer() {
             {/* Live Session Overlays */}
             <LiveBanner />
             <DirectorControls />
-        </div>
+        </div >
     );
 }
