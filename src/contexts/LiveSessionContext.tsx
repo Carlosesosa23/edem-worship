@@ -26,24 +26,24 @@ interface LiveSessionContextType {
 const LiveSessionContext = createContext<LiveSessionContextType | undefined>(undefined);
 
 export const SIGNALS = [
-    { label: "Ministrar", color: "bg-purple-600" },
-    { label: "Fluir", color: "bg-blue-600" },
-    { label: "Coro", color: "bg-indigo-600" },
+    { label: "Ministrar", color: "bg-stone-600" },
+    { label: "Fluir", color: "bg-teal-600" },
+    { label: "Coro", color: "bg-amber-600" },
     { label: "Intro", color: "bg-emerald-600" },
-    { label: "Verso", color: "bg-slate-600" },
+    { label: "Verso", color: "bg-zinc-600" },
     { label: "Puente", color: "bg-orange-600" },
-    { label: "TERMINAR", color: "bg-red-600 font-bold" },
-    { label: "Predicador subiendo", color: "bg-yellow-600" },
-    { label: "Nueva Canción Solicitada", color: "bg-pink-600" },
+    { label: "TERMINAR", color: "bg-red-700 font-bold" },
+    { label: "Predicador subiendo", color: "bg-yellow-700" },
+    { label: "Nueva Canción Solicitada", color: "bg-rose-600" },
 ];
 
 export const SINGER_COLORS: SingerColor[] = [
-    { key: "purple", label: "Cantante 1", bg: "bg-purple-500",  text: "text-purple-300",  border: "border-purple-400",  light: "bg-purple-500/20" },
-    { key: "cyan",   label: "Cantante 2", bg: "bg-cyan-500",    text: "text-cyan-300",    border: "border-cyan-400",    light: "bg-cyan-500/20"   },
-    { key: "rose",   label: "Cantante 3", bg: "bg-rose-500",    text: "text-rose-300",    border: "border-rose-400",    light: "bg-rose-500/20"   },
-    { key: "amber",  label: "Cantante 4", bg: "bg-amber-500",   text: "text-amber-300",   border: "border-amber-400",   light: "bg-amber-500/20"  },
-    { key: "green",  label: "Cantante 5", bg: "bg-green-500",   text: "text-green-300",   border: "border-green-400",   light: "bg-green-500/20"  },
-    { key: "todos",  label: "Todos",      bg: "bg-white",       text: "text-white",       border: "border-white/60",    light: "bg-white/10"      },
+    { key: "amber",  label: "Cantante 1", bg: "bg-amber-600",  text: "text-amber-300",  border: "border-amber-500",  light: "bg-amber-500/20" },
+    { key: "rose",   label: "Cantante 2", bg: "bg-rose-600",   text: "text-rose-300",   border: "border-rose-500",   light: "bg-rose-500/20"  },
+    { key: "stone",  label: "Cantante 3", bg: "bg-stone-600",  text: "text-stone-300",  border: "border-stone-500",  light: "bg-stone-500/20"  },
+    { key: "orange", label: "Cantante 4", bg: "bg-orange-600", text: "text-orange-300", border: "border-orange-500", light: "bg-orange-500/20" },
+    { key: "teal",   label: "Cantante 5", bg: "bg-teal-600",   text: "text-teal-300",   border: "border-teal-500",   light: "bg-teal-500/20"  },
+    { key: "todos",  label: "Todos",      bg: "bg-white",      text: "text-neutral-800",border: "border-white/60",   light: "bg-white/10"      },
 ];
 
 const INITIAL_STATE: LiveState = {
