@@ -59,3 +59,41 @@ export interface WorshipEvent {
     notes?: string;
     createdAt: number;
 }
+
+// ─── Finanzas ────────────────────────────────────────────────────────────────
+
+/** Una aportación semanal de un miembro */
+export interface Contribution {
+    id: string;
+    memberName: string;     // Nombre del miembro que aportó
+    amount: number;         // En lempiras (por defecto 50)
+    weekLabel: string;      // Ej. "Semana 10 – Mar 2026"
+    weekStart: number;      // Timestamp lunes de la semana
+    notes?: string;
+    createdAt: number;
+}
+
+/** Un gasto o compra de insumos */
+export interface Expense {
+    id: string;
+    description: string;    // Qué se compró / en qué se gastó
+    amount: number;         // En lempiras
+    category: 'insumos' | 'equipamiento' | 'transporte' | 'alimentacion' | 'otro';
+    receiptUrl?: string;    // URL foto de recibo (futuro)
+    notes?: string;
+    date: number;           // Timestamp del gasto
+    registeredBy?: string;
+    createdAt: number;
+}
+
+/** Resumen de deuda de un miembro, calculado en tiempo real */
+export interface MemberDebt {
+    memberName: string;
+    totalPaid: number;        // Lempiras aportados en total
+    debtAmount: number;       // Lempiras adeudados (semanas perdidas × L 50)
+    missedWeeks: number;      // Número de semanas sin aportar
+    paidWeeks: number;        // Número de semanas que sí aportó
+    applicableWeeks: number;  // Total de semanas desde que se registró
+    isUpToDate: boolean;      // true si no debe ninguna semana
+    missedWeekLabels: string[]; // Etiquetas de las semanas adeudadas
+}

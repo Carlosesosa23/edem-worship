@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import type { Song } from '../types/index';
 import { transposeContent, MAJOR_KEYS, MINOR_KEYS, getSemitonesDifference } from '../lib/transpose';
-import { Music, User, ChevronDown } from 'lucide-react';
+import { Music, User, ChevronDown, Timer } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useLiveSession, SINGER_COLORS } from '../contexts/LiveSessionContext';
+import { Metronome } from './Metronome';
 
 interface MixSongItemProps {
     song: Song;
@@ -19,6 +20,7 @@ export function MixSongItem({ song, index, voiceMode, activeSinger }: MixSongIte
     const voiceAssignments = liveState.voiceAssignments ?? {};
 
     const [selectedKey, setSelectedKey] = useState(song.key || 'C');
+    const [metronomeOpen, setMetronomeOpen] = useState(false);
 
     const transposedContent = useMemo(() => {
         const semitones = getSemitonesDifference(song.key, selectedKey);
@@ -178,25 +180,43 @@ export function MixSongItem({ song, index, voiceMode, activeSinger }: MixSongIte
                         </div>
                     </div>
 
-                    {/* Transpose Controls */}
+                    {/* Transpose Controls + Metronome */}
                     <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                        <div className="flex items-center bg-surface rounded-lg overflow-hidden border border-white/10 shadow-sm relative">
-                            <select
-                                value={selectedKey}
-                                onChange={(e) => setSelectedKey(e.target.value)}
-                                className="bg-transparent text-secondary font-bold text-sm py-1 pl-3 pr-6 appearance-none cursor-pointer focus:outline-none min-w-[4rem]"
+                        <div className="flex items-center gap-1">
+                            {/* Metronome toggle */}
+                            <button
+                                onClick={() => setMetronomeOpen(o => !o)}
+                                title="Metrónomo"
+                                className={cn(
+                                    'p-1.5 rounded-lg transition-all',
+                                    metronomeOpen
+                                        ? 'bg-primary/20 text-primary'
+                                        : 'text-text-muted hover:text-text-main hover:bg-white/10'
+                                )}
                             >
-                                <optgroup label="Mayores">
-                                    {MAJOR_KEYS.map(k => <option key={k} value={k} className="bg-surface text-text-main">{k}</option>)}
-                                </optgroup>
-                                <optgroup label="Menores">
-                                    {MINOR_KEYS.map(k => <option key={k} value={k} className="bg-surface text-text-main">{k}</option>)}
-                                </optgroup>
-                            </select>
-                            <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
-                                <ChevronDown size={12} />
+                                <Timer size={16} />
+                            </button>
+
+                            {/* Key selector */}
+                            <div className="flex items-center bg-surface rounded-lg overflow-hidden border border-white/10 shadow-sm relative">
+                                <select
+                                    value={selectedKey}
+                                    onChange={(e) => setSelectedKey(e.target.value)}
+                                    className="bg-transparent text-secondary font-bold text-sm py-1 pl-3 pr-6 appearance-none cursor-pointer focus:outline-none min-w-[4rem]"
+                                >
+                                    <optgroup label="Mayores">
+                                        {MAJOR_KEYS.map(k => <option key={k} value={k} className="bg-surface text-text-main">{k}</option>)}
+                                    </optgroup>
+                                    <optgroup label="Menores">
+                                        {MINOR_KEYS.map(k => <option key={k} value={k} className="bg-surface text-text-main">{k}</option>)}
+                                    </optgroup>
+                                </select>
+                                <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
+                                    <ChevronDown size={12} />
+                                </div>
                             </div>
                         </div>
+
                         {isDirector && (
                             <button
                                 onClick={() => {
@@ -219,6 +239,16 @@ export function MixSongItem({ song, index, voiceMode, activeSinger }: MixSongIte
                     </div>
                 </div>
             </div>
+
+            {/* Metronome panel — expands inline below song header */}
+            {metronomeOpen && (
+                <div className="mb-4 max-w-sm">
+                    <Metronome
+                        initialBpm={song.bpm ?? 100}
+                        onClose={() => setMetronomeOpen(false)}
+                    />
+                </div>
+            )}
 
             {/* Content */}
             <div translate="no" className="notranslate font-mono text-base text-text-main px-1">

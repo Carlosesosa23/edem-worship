@@ -2,11 +2,13 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSongs } from '../contexts/SongsContext';
 import { transposeContent, MAJOR_KEYS, MINOR_KEYS, getSemitonesDifference } from '../lib/transpose';
-import { ArrowLeft, Edit, Music, User, Mic, Youtube, Trash2, Palette, X } from 'lucide-react';
+import { ArrowLeft, Edit, Music, User, Mic, Youtube, Trash2, Palette, X, Share2, Copy, Check, Timer } from 'lucide-react';
 import { LiveBanner } from '../components/LiveBanner';
 import { DirectorControls } from '../components/DirectorControls';
+import { Metronome } from '../components/Metronome';
 import { useLiveSession, SINGER_COLORS } from '../contexts/LiveSessionContext';
 import { cn } from '../lib/utils';
+import { useShareSong } from '../hooks/useShareSong';
 
 function getYouTubeID(url: string) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -29,6 +31,12 @@ export function SongViewer() {
     const [activeSinger, setActiveSinger] = useState<string | null>(null);
     // Lines selected in current drag/tap gesture (director only)
     const [pendingLines, setPendingLines] = useState<Set<number>>(new Set());
+
+    // Metronome panel
+    const [metronomeOpen, setMetronomeOpen] = useState(false);
+
+    // Share / copy
+    const { share, status: shareStatus } = useShareSong();
 
     const transposedContent = useMemo(() => {
         if (!song) return '';
@@ -204,6 +212,40 @@ export function SongViewer() {
                             <Youtube size={24} />
                         </a>
                     )}
+
+                    {/* Metrónomo */}
+                    <button
+                        onClick={() => setMetronomeOpen(o => !o)}
+                        title="Metrónomo"
+                        className={cn(
+                            'p-2 rounded-lg transition-all',
+                            metronomeOpen
+                                ? 'bg-primary/20 text-primary'
+                                : 'text-text-muted hover:text-text-main hover:bg-white/10'
+                        )}
+                    >
+                        <Timer size={20} />
+                    </button>
+
+                    {/* Compartir / Copiar canción */}
+                    <button
+                        onClick={() => share(song, selectedKey)}
+                        title={shareStatus === 'copied' ? '¡Copiado!' : shareStatus === 'shared' ? '¡Compartido!' : 'Compartir canción'}
+                        className={cn(
+                            'p-2 rounded-lg transition-all',
+                            shareStatus === 'idle'
+                                ? 'text-text-muted hover:text-white hover:bg-white/10'
+                                : 'text-green-400 bg-green-500/15'
+                        )}
+                    >
+                        {shareStatus === 'copied' || shareStatus === 'shared' ? (
+                            <Check size={20} />
+                        ) : (
+                            // Muestra Share2 si el dispositivo soporta Web Share API, Copy si no
+                            'share' in navigator ? <Share2 size={20} /> : <Copy size={20} />
+                        )}
+                    </button>
+
                     <Link to={`/edit/${song.id}`} className="p-2 hover:bg-white/10 rounded-lg text-text-muted hover:text-text-main transition-colors">
                         <Edit size={20} />
                     </Link>
@@ -262,6 +304,16 @@ export function SongViewer() {
                             Selecciona un cantante para empezar a asignar líneas
                         </p>
                     )}
+                </div>
+            )}
+
+            {/* Metronome panel — collapses below header */}
+            {metronomeOpen && (
+                <div className="px-4 pt-3 pb-1 max-w-sm mx-auto">
+                    <Metronome
+                        initialBpm={song.bpm ?? 100}
+                        onClose={() => setMetronomeOpen(false)}
+                    />
                 </div>
             )}
 

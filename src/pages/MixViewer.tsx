@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useMixes } from '../contexts/MixesContext';
 import { useSongs } from '../contexts/SongsContext';
-import { ArrowLeft, Calendar, Music, List, Trash2, Radio, Palette, X } from 'lucide-react';
+import { ArrowLeft, Calendar, Music, List, Trash2, Radio, Palette, X, Edit, Share2, Copy, Check } from 'lucide-react';
 import { MixSongItem } from '../components/MixSongItem';
-import { Link } from 'react-router-dom';
 import { LiveBanner } from '../components/LiveBanner';
 import { DirectorControls } from '../components/DirectorControls';
 import { NowPlayingBar } from '../components/NowPlayingBar';
 import { useLiveSession, SINGER_COLORS } from '../contexts/LiveSessionContext';
+import { useShareMix } from '../hooks/useShareMix';
 import { cn } from '../lib/utils';
 
 export function MixViewer() {
@@ -23,6 +23,9 @@ export function MixViewer() {
     // Voice assignment mode — director only
     const [voiceMode, setVoiceMode] = useState(false);
     const [activeSinger, setActiveSinger] = useState<string | null>(null);
+
+    // Share mix
+    const { share: shareMix, status: shareStatus } = useShareMix();
 
     const mix = mixes.find(m => m.id === id);
 
@@ -73,6 +76,33 @@ export function MixViewer() {
                                     <Palette size={20} />
                                 </button>
                             )}
+
+                            {/* Compartir repertorio */}
+                            <button
+                                onClick={() => shareMix(mix, songs)}
+                                title={shareStatus === 'copied' ? '¡Copiado!' : shareStatus === 'shared' ? '¡Compartido!' : 'Compartir repertorio'}
+                                className={cn(
+                                    'p-2 rounded-lg transition-all',
+                                    shareStatus === 'idle'
+                                        ? 'text-text-muted hover:text-white hover:bg-white/10'
+                                        : 'text-green-400 bg-green-500/15'
+                                )}
+                            >
+                                {shareStatus === 'copied' || shareStatus === 'shared' ? (
+                                    <Check size={20} />
+                                ) : (
+                                    'share' in navigator ? <Share2 size={20} /> : <Copy size={20} />
+                                )}
+                            </button>
+
+                            {/* Edit button */}
+                            <Link
+                                to={`/mixes/edit/${mix.id}`}
+                                className="p-2 hover:bg-white/10 rounded-lg text-text-muted hover:text-text-main transition-colors"
+                                title="Editar mix"
+                            >
+                                <Edit size={20} />
+                            </Link>
                             <button
                                 onClick={async () => {
                                     if (window.confirm('¿Estás seguro que deseas ELIMINAR este mix permanentemente?')) {

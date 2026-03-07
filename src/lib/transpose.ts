@@ -69,8 +69,8 @@ export function transposeContent(content: string, semitones: number, originalKey
         const tokens = line.split(/\s+/).filter(t => t.trim());
         if (tokens.length === 0) return line;
 
-        // Pattern for valid chords like C#m7, F/G, Dsus4
-        const chordPattern = /^[A-G][#b]?(m|min|maj|dim|aug|sus|add|[0-9])*(\/[A-G][#b]?)?$/;
+        // Pattern for valid chords like C#m7, F/G, Dsus4, Dm7b5, Fmaj7#11
+        const chordPattern = /^[A-G][#b]?(m|min|maj|dim|aug|sus|add|[0-9#b])*(\/[A-G][#b]?)?$/;
         const validChordCount = tokens.filter(t => chordPattern.test(t)).length;
 
         // If > 50% of tokens are chords, treat as a chord line
@@ -120,7 +120,7 @@ function transposeLine(line: string, semitones: number, targetFlats: boolean): s
  * Llamar esto ANTES de guardar en BD para garantizar formato uniforme.
  */
 export function normalizeContent(content: string): string {
-    const chordPattern = /^[A-G][#b]?(m|min|maj|dim|aug|sus|add|[0-9])*(\/[A-G][#b]?)?$/;
+    const chordPattern = /^[A-G][#b]?(m|min|maj|dim|aug|sus|add|[0-9#b])*(\/[A-G][#b]?)?$/;
 
     return content.split('\n').map(line => {
         // Línea vacía o ya tiene corchetes → sin cambios
@@ -163,6 +163,8 @@ export function getSemitonesDifference(originalKey: string, targetKey: string): 
     if (index1 === -1 || index2 === -1) return 0;
 
     let diff = index2 - index1;
-    // Normalize to easiest direction? Or just positive mod?
+    // Normalize to shortest path: range -6..+6
+    if (diff > 6) diff -= 12;
+    if (diff < -6) diff += 12;
     return diff;
 }

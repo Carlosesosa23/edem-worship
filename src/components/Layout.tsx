@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Home, Music, Disc, CalendarDays } from 'lucide-react';
+import { Home, Music, Disc, CalendarDays, Wallet } from 'lucide-react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import { LiveBanner } from './LiveBanner';
@@ -14,6 +14,7 @@ export function Layout() {
         { icon: Music, label: 'Canciones', path: '/songs' },
         { icon: Disc, label: 'Mixes', path: '/mixes' },
         { icon: CalendarDays, label: 'Agenda', path: '/agenda' },
+        { icon: Wallet, label: 'Finanzas', path: '/finanzas' },
     ];
 
     return (
