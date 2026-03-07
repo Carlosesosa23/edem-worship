@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { Song } from '../types/index';
-import { transposeContent, MAJOR_KEYS, MINOR_KEYS, getSemitonesDifference } from '../lib/transpose';
+import { transposeContent, normalizeContent, MAJOR_KEYS, MINOR_KEYS, getSemitonesDifference } from '../lib/transpose';
 import { Music, User, ChevronDown, Timer } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useLiveSession, SINGER_COLORS } from '../contexts/LiveSessionContext';
@@ -24,9 +24,11 @@ export function MixSongItem({ song, index, voiceMode, activeSinger }: MixSongIte
     const [metronomeOpen, setMetronomeOpen] = useState(false);
 
     const transposedContent = useMemo(() => {
+        // Normalize first: converts plain chord lines to bracket notation for SongContent
+        const normalized = normalizeContent(song.content);
         const semitones = getSemitonesDifference(song.key, selectedKey);
-        if (semitones === 0) return song.content;
-        return transposeContent(song.content, semitones, song.key);
+        if (semitones === 0) return normalized;
+        return transposeContent(normalized, semitones, song.key);
     }, [song.content, song.key, selectedKey]);
 
     const handleLineClick = (lineIdx: number) => {

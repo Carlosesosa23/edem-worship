@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSongs } from '../contexts/SongsContext';
-import { transposeContent, MAJOR_KEYS, MINOR_KEYS, getSemitonesDifference } from '../lib/transpose';
+import { transposeContent, normalizeContent, MAJOR_KEYS, MINOR_KEYS, getSemitonesDifference } from '../lib/transpose';
 import { ArrowLeft, Edit, Music, User, Mic, Youtube, Trash2, Palette, X, Share2, Copy, Check, Timer } from 'lucide-react';
 import { LiveBanner } from '../components/LiveBanner';
 import { DirectorControls } from '../components/DirectorControls';
@@ -39,9 +39,13 @@ export function SongViewer() {
 
     const transposedContent = useMemo(() => {
         if (!song) return '';
+        // Normalize first: converts plain chord lines (e.g. "G  Am") to bracket
+        // notation ([G]  [Am]) so SongContent can pair chords with their syllables.
+        // This handles songs saved before normalizeContent was applied on save.
+        const normalized = normalizeContent(song.content);
         const semitones = getSemitonesDifference(song.key, selectedKey);
-        if (semitones === 0) return song.content;
-        return transposeContent(song.content, semitones, song.key);
+        if (semitones === 0) return normalized;
+        return transposeContent(normalized, semitones, song.key);
     }, [song, selectedKey]);
 
     if (!song) {
