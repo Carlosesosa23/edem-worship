@@ -38,12 +38,12 @@ export const SIGNALS = [
 ];
 
 export const SINGER_COLORS: SingerColor[] = [
-    { key: "fuchsia", label: "Cantante 1", bg: "bg-fuchsia-500", text: "text-fuchsia-300", border: "border-fuchsia-400", light: "bg-fuchsia-500/20" },
-    { key: "cyan",    label: "Cantante 2", bg: "bg-cyan-500",    text: "text-cyan-300",    border: "border-cyan-400",    light: "bg-cyan-500/20"  },
-    { key: "emerald", label: "Cantante 3", bg: "bg-emerald-500", text: "text-emerald-300", border: "border-emerald-400", light: "bg-emerald-500/20" },
-    { key: "amber",   label: "Cantante 4", bg: "bg-amber-500",   text: "text-amber-300",   border: "border-amber-400",   light: "bg-amber-500/20" },
-    { key: "indigo",  label: "Cantante 5", bg: "bg-indigo-500",  text: "text-indigo-300",  border: "border-indigo-400",  light: "bg-indigo-500/20" },
-    { key: "todos",   label: "Todos",      bg: "bg-white",       text: "text-slate-800",   border: "border-white/60",    light: "bg-white/10"      },
+    { key: "red",    label: "Rojo",     bg: "bg-red-600",    text: "text-red-400",    border: "border-red-500",    light: "bg-red-600/20"    },
+    { key: "blue",   label: "Azul",     bg: "bg-blue-600",   text: "text-blue-400",   border: "border-blue-500",   light: "bg-blue-600/20"   },
+    { key: "yellow", label: "Amarillo", bg: "bg-yellow-500", text: "text-yellow-400", border: "border-yellow-500", light: "bg-yellow-500/20" },
+    { key: "green",  label: "Verde",    bg: "bg-green-600",  text: "text-green-400",  border: "border-green-500",  light: "bg-green-600/20"  },
+    { key: "white",  label: "Blanco",   bg: "bg-white",      text: "text-white",      border: "border-white",      light: "bg-white/20"      },
+    { key: "gray",   label: "Gris",     bg: "bg-gray-500",   text: "text-gray-400",   border: "border-gray-500",   light: "bg-gray-500/20"   },
 ];
 
 const INITIAL_STATE: LiveState = {

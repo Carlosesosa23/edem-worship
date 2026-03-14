@@ -13,17 +13,17 @@ export interface Song {
     updatedAt?: number;
 }
 
-/** Asignación de voz por línea: key = índice de línea como string, value = singerKey (ej. "purple") */
+/** Asignación de voz por línea: key = índice de línea como string, value = singerKey (ej. "red", "blue") */
 export type VoiceAssignments = Record<string, string>;
 
 /** Paleta de un cantante: color Tailwind completo para bg y texto */
 export interface SingerColor {
-    key: string;       // identificador único, ej. "purple"
-    label: string;     // nombre visible, ej. "Cantante 1"
-    bg: string;        // clase Tailwind completa, ej. "bg-purple-500"
-    text: string;      // clase Tailwind completa, ej. "text-purple-300"
-    border: string;    // clase Tailwind completa, ej. "border-purple-400"
-    light: string;     // bg suave para highlight de línea, ej. "bg-purple-500/20"
+    key: string;       // identificador único, ej. "red"
+    label: string;     // nombre visible, ej. "Rojo"
+    bg: string;        // clase Tailwind completa, ej. "bg-red-600"
+    text: string;      // clase Tailwind completa, ej. "text-red-400"
+    border: string;    // clase Tailwind completa, ej. "border-red-500"
+    light: string;     // bg suave para highlight de línea, ej. "bg-red-600/20"
 }
 
 export interface Mix {
